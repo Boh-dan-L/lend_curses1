@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Дякуємо</title>
+  <link rel="stylesheet" href="../../shared/css/base.css">
+  <link rel="stylesheet" href="../knee.css">
+  <!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5SKWHT5D');</script>
+<!-- End Google Tag Manager -->
+ <!-- TikTok Pixel Code Start -->
+<script>
+!function (w, d, t) {
+  w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+
+  ttq.load('D3TU13JC77U1STIORTPG');
+  ttq.page();
+}(window, document, 'ttq');
+</script>
+<!-- TikTok Pixel Code End -->
+</head>
+<body>
+  <!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5SKWHT5D"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+<script>
+(function () {
+  // унікальний ключ для цієї сторінки
+  const FIRE_KEY = 'fb_purchase_fired_890';
+  if (sessionStorage.getItem(FIRE_KEY)) return;
+
+  window.dataLayer = window.dataLayer || [];
+  const url = new URL(location.href);
+  const orderId = url.searchParams.get('order_id') || ('ORD890_' + Date.now());
+
+  dataLayer.push({
+    event: 'purchase',
+    purchase: {
+      value: 890,
+      currency: 'UAH',
+      content_name: 'Курс + індивідуальний розбір',
+      content_type: 'product',
+      content_ids: ['COURSE_PLUS'],
+      order_id: orderId,
+      event_id: orderId + '_PIX'
+    }
+  });
+
+  // обов’язково передаємо і ключ, і значення
+  sessionStorage.setItem(FIRE_KEY);
+})();
+</script>
+
+
+  <main class="thankyou">
+    <div class="thankyou__box container">
+      <h1 class="thankyou__title">🎉 Дякуємо за покупку!</h1>
+      <p class="thankyou__text">
+        Найближчим часом ми з вами звʼяжемось.
+        А поки тисніть кнопку нижче, щоб отримати доступ до курсу.👇
+      </p>
+      <a class="btn btn--primary" href="https://t.me/KneeRehab_bot?start=knee25">
+        Перейти до курсу
+      </a>
+    </div>
+  </main>
+  <footer class="footer">© Bogdan Rehab</footer>
+  <script>
+  </script>
+</body>
+</html>
