@@ -46,52 +46,119 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     return match ? decodeURIComponent(match[2]) : null;
   }
 
-  function ensureExternalId() {
-    let id = localStorage.getItem("meta_external_id");
-    if (!id) {
-      id = (window.crypto && crypto.randomUUID)
-        ? crypto.randomUUID()
-        : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-            const r = Math.random() * 16 | 0;
-            const v = c === 'x' ? r : (r & 0x3 | 0x8);
-            return v.toString(16);
-          });
-      localStorage.setItem("meta_external_id", id);
+  function uuidv4() {
+    if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  function getLS(key) {
+    try {
+      return localStorage.getItem(key);
+    } catch (e) {
+      return null;
     }
-    return id;
+  }
+
+  function setLS(key, value) {
+    try {
+      localStorage.setItem(key, value);
+    } catch (e) {}
   }
 
   function saveIfExists(key, value) {
     if (value !== null && value !== undefined && value !== "") {
-      localStorage.setItem(key, value);
+      setLS(key, value);
     }
   }
 
-  ensureExternalId();
-
-  if (!localStorage.getItem("meta_first_seen_at")) {
-    localStorage.setItem("meta_first_seen_at", String(Math.floor(Date.now() / 1000)));
+  function ensureExternalId() {
+    let id = getLS("meta_external_id");
+    if (!id) {
+      id = uuidv4();
+      setLS("meta_external_id", id);
+    }
+    return id;
   }
 
-  saveIfExists("meta_last_utm_source", getParam("utm_source"));
-  saveIfExists("meta_last_utm_medium", getParam("utm_medium"));
-  saveIfExists("meta_last_utm_campaign", getParam("utm_campaign"));
-  saveIfExists("meta_last_utm_adset", getParam("utm_adset"));
-  saveIfExists("meta_last_utm_content", getParam("utm_content"));
-  saveIfExists("meta_last_utm_term", getParam("utm_term"));
+  const utm = {
+    utm_source: getParam("utm_source"),
+    utm_medium: getParam("utm_medium"),
+    utm_campaign: getParam("utm_campaign"),
+    utm_adset: getParam("utm_adset"),
+    utm_content: getParam("utm_content"),
+    utm_term: getParam("utm_term")
+  };
 
-  saveIfExists("meta_last_fbclid", getParam("fbclid"));
-
+  const fbclid = getParam("fbclid");
   const fbp = getCookie("_fbp");
+  const nowTs = String(Math.floor(Date.now() / 1000));
+
+  ensureExternalId();
   saveIfExists("meta_fbp", fbp);
 
+  const hasAttributionInUrl =
+    Object.values(utm).some(Boolean) || !!fbclid;
+
+  // FIRST TOUCH
+  if (!getLS("meta_first_seen_at") && hasAttributionInUrl) {
+    setLS("meta_first_seen_at", nowTs);
+
+    saveIfExists("meta_first_utm_source", utm.utm_source);
+    saveIfExists("meta_first_utm_medium", utm.utm_medium);
+    saveIfExists("meta_first_utm_campaign", utm.utm_campaign);
+    saveIfExists("meta_first_utm_adset", utm.utm_adset);
+    saveIfExists("meta_first_utm_content", utm.utm_content);
+    saveIfExists("meta_first_utm_term", utm.utm_term);
+    saveIfExists("meta_first_fbclid", fbclid);
+  }
+
+  // Якщо first_seen_at ще нема взагалі — створи хоча б базовий timestamp
+  if (!getLS("meta_first_seen_at")) {
+    setLS("meta_first_seen_at", nowTs);
+  }
+
+  // LAST TOUCH
+  if (hasAttributionInUrl) {
+    setLS("meta_last_seen_at", nowTs);
+
+    saveIfExists("meta_last_utm_source", utm.utm_source);
+    saveIfExists("meta_last_utm_medium", utm.utm_medium);
+    saveIfExists("meta_last_utm_campaign", utm.utm_campaign);
+    saveIfExists("meta_last_utm_adset", utm.utm_adset);
+    saveIfExists("meta_last_utm_content", utm.utm_content);
+    saveIfExists("meta_last_utm_term", utm.utm_term);
+    saveIfExists("meta_last_fbclid", fbclid);
+  }
+
   console.log("ATTR INIT", {
-    external_id: localStorage.getItem("meta_external_id"),
-    fbp: localStorage.getItem("meta_fbp"),
-    fbclid: localStorage.getItem("meta_last_fbclid"),
-    utm_source: localStorage.getItem("meta_last_utm_source"),
-    utm_campaign: localStorage.getItem("meta_last_utm_campaign"),
-    utm_content: localStorage.getItem("meta_last_utm_content")
+    external_id: getLS("meta_external_id"),
+    fbp: getLS("meta_fbp"),
+
+    first: {
+      seen_at: getLS("meta_first_seen_at"),
+      fbclid: getLS("meta_first_fbclid"),
+      utm_source: getLS("meta_first_utm_source"),
+      utm_medium: getLS("meta_first_utm_medium"),
+      utm_campaign: getLS("meta_first_utm_campaign"),
+      utm_adset: getLS("meta_first_utm_adset"),
+      utm_content: getLS("meta_first_utm_content"),
+      utm_term: getLS("meta_first_utm_term")
+    },
+
+    last: {
+      seen_at: getLS("meta_last_seen_at"),
+      fbclid: getLS("meta_last_fbclid"),
+      utm_source: getLS("meta_last_utm_source"),
+      utm_medium: getLS("meta_last_utm_medium"),
+      utm_campaign: getLS("meta_last_utm_campaign"),
+      utm_adset: getLS("meta_last_utm_adset"),
+      utm_content: getLS("meta_last_utm_content"),
+      utm_term: getLS("meta_last_utm_term")
+    }
   });
 })();
 </script>
@@ -138,13 +205,15 @@ document.addEventListener("DOMContentLoaded", function () {
         attribution: {
           external_id: getLS("meta_external_id"),
           fbp: getLS("meta_fbp"),
-          fbclid: getLS("meta_last_fbclid"),
-          utm_source: getLS("meta_last_utm_source"),
-          utm_medium: getLS("meta_last_utm_medium"),
-          utm_campaign: getLS("meta_last_utm_campaign"),
-          utm_adset: getLS("meta_last_utm_adset"),
-          utm_content: getLS("meta_last_utm_content"),
-          utm_term: getLS("meta_last_utm_term"),
+
+          fbclid: getLS("meta_last_fbclid") || getLS("meta_first_fbclid"),
+          utm_source: getLS("meta_last_utm_source") || getLS("meta_first_utm_source"),
+          utm_medium: getLS("meta_last_utm_medium") || getLS("meta_first_utm_medium"),
+          utm_campaign: getLS("meta_last_utm_campaign") || getLS("meta_first_utm_campaign"),
+          utm_adset: getLS("meta_last_utm_adset") || getLS("meta_first_utm_adset"),
+          utm_content: getLS("meta_last_utm_content") || getLS("meta_first_utm_content"),
+          utm_term: getLS("meta_last_utm_term") || getLS("meta_first_utm_term"),
+
           first_seen_at: getLS("meta_first_seen_at")
         }
       };
