@@ -6,7 +6,13 @@
   <title>Дякуємо</title>
   <link rel="stylesheet" href="../../shared/css/base.css">
   <link rel="stylesheet" href="../knee.css">
-
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-5SKWHT5D');</script>
+<!-- End Google Tag Manager -->
  <!-- TikTok Pixel Code Start -->
 <script>
 !function (w, d, t) {
@@ -22,35 +28,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 <!-- TikTok Pixel Code End -->
 </head>
 <body>
-
-<script>
-(function () {
-  // унікальний ключ для цієї сторінки
-  const FIRE_KEY = 'fb_purchase_fired_890';
-  if (sessionStorage.getItem(FIRE_KEY)) return;
-
-  window.dataLayer = window.dataLayer || [];
-  const url = new URL(location.href);
-  const orderId = url.searchParams.get('order_id') || ('ORD890_' + Date.now());
-
-  dataLayer.push({
-    event: 'purchase',
-    purchase: {
-      value: 890,
-      currency: 'UAH',
-      content_name: 'Курс + індивідуальний розбір',
-      content_type: 'product',
-      content_ids: ['COURSE_PLUS'],
-      order_id: orderId,
-      event_id: orderId + '_PIX'
-    }
-  });
-
-  // обов’язково передаємо і ключ, і значення
-  sessionStorage.setItem(FIRE_KEY);
-})();
-</script>
-
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-5SKWHT5D"
+height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
 
   <main class="thankyou">
     <div class="thankyou__box container">
@@ -67,5 +48,33 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   <footer class="footer">© Bogdan Rehab</footer>
   <script>
   </script>
+  <script>
+(function () {
+  var params = new URLSearchParams(window.location.search);
+  var eventId = params.get("event_id");
+  var orderRef = params.get("order_ref");
+  var value = parseFloat(params.get("value")) || 0;
+  var currency = params.get("currency") || "UAH";
+
+  if (!eventId || !orderRef) return;
+
+  // захист від повторного фаєру при F5
+  var dedupKey = "meta_purchase_fired_" + orderRef;
+  if (sessionStorage.getItem(dedupKey)) return;
+  sessionStorage.setItem(dedupKey, "1");
+
+  // пуш у dataLayer для GTM
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push({
+    event: "meta_purchase",
+    purchase: {
+      event_id: eventId,
+      order_ref: orderRef,
+      value: value,
+      currency: currency
+    }
+  });
+})();
+</script>
 </body>
 </html>
