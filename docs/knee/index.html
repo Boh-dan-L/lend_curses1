@@ -165,19 +165,16 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
 <script>
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("pay script loaded");
-
   const API_URL = "https://bayer-1078313683185.europe-west1.run.app";
   const buttons = document.querySelectorAll(".pay-btn");
-
-  console.log("buttons found:", buttons.length);
 
   if (!buttons.length) return;
 
   function uuidv4() {
     if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+      const r = Math.random() * 16 | 0;
+      const v = c === 'x' ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
   }
@@ -192,9 +189,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   buttons.forEach(function (btn) {
     btn.addEventListener("click", async function (e) {
-      console.log("button clicked", btn.dataset.productId);
       e.preventDefault();
 
+      const originalText = btn.textContent;
       const eventId = uuidv4();
 
       const payload = {
@@ -221,8 +218,12 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("PAYLOAD TO API:", payload);
 
       try {
+        btn.textContent = "Формуємо платіж...";
+        btn.disabled = true;
+        btn.classList.add("is-loading");
         btn.style.pointerEvents = "none";
-        btn.style.opacity = "0.7";
+
+        const startedAt = Date.now();
 
         const res = await fetch(API_URL, {
           method: "POST",
@@ -232,6 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
           body: JSON.stringify(payload)
         });
 
+        console.log("create-order ms:", Date.now() - startedAt);
         console.log("response status:", res.status);
 
         const data = await res.json();
@@ -271,8 +273,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
       } catch (error) {
         console.error("Помилка create-order/payment:", error);
+        btn.textContent = originalText;
+        btn.disabled = false;
+        btn.classList.remove("is-loading");
         btn.style.pointerEvents = "";
-        btn.style.opacity = "";
         alert("Не вдалося створити оплату. Спробуй ще раз.");
       }
     });

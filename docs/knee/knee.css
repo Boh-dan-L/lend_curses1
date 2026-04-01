@@ -24,6 +24,39 @@ html {
   scroll-behavior: smooth;
 }
 
+.pay-btn {
+  position: relative;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.pay-btn:disabled,
+.pay-btn.is-loading {
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+.pay-btn.is-loading::after {
+  content: "";
+  width: 16px;
+  height: 16px;
+  margin-left: 10px;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  display: inline-block;
+  vertical-align: middle;
+  animation: pay-btn-spin 0.7s linear infinite;
+}
+
+@keyframes pay-btn-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 body {
   margin: 0;
   padding: 0;
