@@ -688,3 +688,36 @@ img{ max-width:100%; height:auto; }
 @media (min-width:481px){
   .thankyou .btn { width:auto; padding:14px 32px; }
 }
+
+
+.bs-sticky-cta {
+  position: fixed;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  z-index: 9999;
+
+  display: block;
+  width: calc(100% - 32px);
+  max-width: 480px;
+  margin: 0 auto;
+
+  padding: 14px 18px;
+  border: 0;
+  border-radius: 14px;
+  background: #FF7A00;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 800;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0,0,0,.22);
+}
+
+@media (min-width: 768px) {
+  .bs-sticky-cta {
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    width: 420px;
+  }
+}
