@@ -312,7 +312,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
               <span class="timer-text">діє ще</span>
             </div>
           </div>
-          <div class="timer-grid" id="countdown" aria-label="Зворотний відлік">
+          <div class="timer-grid" id="heroTimer" aria-label="Зворотний відлік">
             <div class="timer-box"><strong id="timerHours">02</strong><span>год</span></div>
             <div class="timer-separator">:</div>
             <div class="timer-box"><strong id="timerMinutes">15</strong><span>хв</span></div>
@@ -588,41 +588,83 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </section>
 
-    <section class="section reveal section-muted">
-      <div class="container">
-        <div class="section-head center">
-          <h2>Хто автор</h2>
-        </div>
+<section class="section reveal section-muted">
+  <div class="container">
+    <div class="section-head center">
+      <h2>Хто автор</h2>
+    </div>
 
-        <article class="author-card">
-          <img class="author-photo" src="./img/avatar.png" alt="Богдан — фізичний терапевт">
-          <div>
-            <h3>Богдан</h3>
-            <div class="author-badge">Фізичний терапевт</div>
-            <p>Я працюю з болем у спині, шиї та суглобах понад 10 років і бачу одну й ту саму проблему: люди або терплять напруження роками, або роблять хаотичні вправи, які не вбудовуються в життя. Тому я створив короткий формат, який реально пройти до кінця навіть під час робочого тижня.</p>
+    <article class="author-card">
+      <img class="author-photo" src="./img/avatar.png" alt="Богдан — фізичний терапевт">
+      <div>
+        <h3>Богдан</h3>
+        <div class="author-badge">Фізичний терапевт</div>
+        <p>Я працюю з болем у спині, шиї та суглобах понад 10 років і бачу одну й ту саму проблему: люди або терплять напруження роками, або роблять хаотичні вправи, які не вбудовуються в життя. Тому я створив короткий формат, який реально пройти до кінця навіть під час робочого тижня.</p>
+      </div>
+    </article>
+
+    <div class="section-head center mt-lg">
+      <h2>Відгуки учасників</h2>
+      <p>Найкраще про формат говорять ті, хто вже спробував проходити його день за днем.</p>
+    </div>
+
+    <div class="reviews-slider" id="reviewsSlider">
+      <div class="reviews-track">
+        <article class="review-card review-slide active">
+          <div class="stars">★★★★★</div>
+          <p>“Мені зайшло саме те, що не треба було змушувати себе тренуватися годину. Щодня приходило одне відео, я просто відкривала Telegram і повторювала. Уже за кілька днів шия менше затискалась до вечора.”</p>
+          <div class="review-author">
+            <span class="initial">О</span>
+            <div>
+              <strong>Олена, 34 роки</strong>
+              <small>Бухгалтер</small>
+            </div>
           </div>
         </article>
 
-        <div class="section-head center mt-lg">
-          <h2>Відгуки учасників</h2>
-          <p>Найкраще про формат говорять ті, хто вже спробував проходити його день за днем.</p>
-        </div>
+        <article class="review-card review-slide">
+          <div class="stars">★★★★★</div>
+          <p>“Раніше то масаж, то випадкові ролики, але ефект був на день-два. Тут сподобалась послідовність: щодня нове заняття, все коротко і по ділу. Між лопатками реально стало легше.”</p>
+          <div class="review-author">
+            <span class="initial">М</span>
+            <div>
+              <strong>Максим, 29 років</strong>
+              <small>Програміст</small>
+            </div>
+          </div>
+        </article>
 
-        <div class="stack gap-md">
-          <article class="review-card">
-            <div class="stars">★★★★★</div>
-            <p>“Мені зайшло саме те, що не треба було змушувати себе тренуватися годину. Щодня приходило одне відео, я просто відкривала Telegram і повторювала. Уже за кілька днів шия менше затискалась до вечора.”</p>
-            <div class="review-author"><span class="initial">О</span><div><strong>Олена, 34 роки</strong><small>Бухгалтер</small></div></div>
-          </article>
-          <article class="review-card">
-            <div class="stars">★★★★★</div>
-            <p>“Раніше то масаж, то випадкові ролики, але ефект був на день-два. Тут сподобалась послідовність: щодня нове заняття, все коротко і по ділу. Між лопатками реально стало легше.”</p>
-            <div class="review-author"><span class="initial">М</span><div><strong>Максим, 29 років</strong><small>Програміст</small></div></div>
-          </article>
-        </div>
+        <article class="review-card review-slide">
+          <div class="stars">★★★★★</div>
+          <p>“Найбільше сподобалось, що вправи можна було робити просто на стільці після роботи. Без зайвого стресу і без думки, що треба ще знаходити час на тренування.”</p>
+          <div class="review-author">
+            <span class="initial">І</span>
+            <div>
+              <strong>Ірина, 38 років</strong>
+              <small>Менеджерка</small>
+            </div>
+          </div>
+        </article>
       </div>
-    </section>
 
+      <div class="reviews-controls">
+        <button class="reviews-btn" id="reviewsPrev" type="button" aria-label="Попередній відгук">
+          ←
+        </button>
+
+        <div class="reviews-dots" id="reviewsDots">
+          <button class="reviews-dot active" type="button" aria-label="Відгук 1"></button>
+          <button class="reviews-dot" type="button" aria-label="Відгук 2"></button>
+          <button class="reviews-dot" type="button" aria-label="Відгук 3"></button>
+        </div>
+
+        <button class="reviews-btn" id="reviewsNext" type="button" aria-label="Наступний відгук">
+          →
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
     <section class="section reveal">
       <div class="container">
         <div class="section-head center">
@@ -658,33 +700,62 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
       </div>
     </section>
 
-    <section id="pricing" class="section pricing reveal">
-      <div class="pricing-bg blob-left"></div>
-      <div class="pricing-bg blob-right"></div>
-      <div class="container container-center">
-        <h2>Почни сьогодні</h2>
-        <p class="pricing-subtitle">Щоб уже цього тижня пройти перші заняття і не залишити проблему ще на один місяць «на потім».</p>
+<section id="pricing" class="section pricing reveal">
+  <div class="pricing-bg blob-left"></div>
+  <div class="pricing-bg blob-right"></div>
+  <div class="container container-center">
+    <h2>Почни сьогодні</h2>
+    <p class="pricing-subtitle">
+      Щоб уже цього тижня пройти перші заняття і не залишити проблему ще на один місяць «на потім».
+    </p>
 
-        <div class="pricing-card-wrap">
-          <div class="pricing-badge">Найкраща пропозиція</div>
-          <div class="pricing-card">
-            <div class="price-row"><span class="price-main">390</span><span class="price-currency">грн</span></div>
-            <div class="price-note">Одноразово • Курс відкривається день за днем • Доступ залишається назавжди</div>
+    <div class="pricing-card-wrap">
+      <div class="pricing-badge">Найкраща пропозиція</div>
 
-            <ul class="price-list">
-              <li>✓ 6 відео по 10–15 хвилин</li>
-              <li>✓ 1 нове заняття щодня в Telegram</li>
-              <li>✓ Бонус: самомасаж при головному болю напруги</li>
-              <li>✓ Вправи на стільці без інвентарю</li>
-            </ul>
-
-            <button class="btn btn-accent btn-lg pay-btn" type="button" data-product-id="neck_390" >Придбати курс ↗</button>
+      <div class="pricing-card">
+        <div class="pricing-timer-box">
+          <div class="pricing-timer-top">
+            <div class="pricing-timer-label">
+              <span class="old-price">1299 грн</span>
+              <span class="new-price-inline">390 грн</span>
+              <span class="timer-text-inline">діє ще</span>
+            </div>
+            <div class="pricing-timer-chip">
+              <span class="timer-dot"></span>
+              таймер акції
+            </div>
           </div>
+
+          <div class="pricing-timer" id="pricingTimer">02:15:00</div>
         </div>
 
-        <p class="pricing-bottom">Безпечна оплата через захищену платіжну систему. Доступ до бота прийде одразу після оплати.</p>
+        <div class="price-row">
+          <span class="price-main">390</span>
+          <span class="price-currency">грн</span>
+        </div>
+
+        <div class="price-note">
+          Одноразово • Курс відкривається день за днем • Доступ залишається назавжди
+        </div>
+
+        <ul class="price-list">
+          <li>✓ 6 відео по 10–15 хвилин</li>
+          <li>✓ 1 нове заняття щодня в Telegram</li>
+          <li>✓ Бонус: самомасаж при головному болю напруги</li>
+          <li>✓ Вправи на стільці без інвентарю</li>
+        </ul>
+
+        <button class="btn btn-accent btn-lg pay-btn" type="button" data-product-id="neck_390">
+          Придбати курс ↗
+        </button>
       </div>
-    </section>
+    </div>
+
+    <p class="pricing-bottom">
+      Безпечна оплата через захищену платіжну систему. Доступ до бота прийде одразу після оплати.
+    </p>
+  </div>
+</section>
   </main>
 
   <div class="sticky-cta" id="stickyCta">
