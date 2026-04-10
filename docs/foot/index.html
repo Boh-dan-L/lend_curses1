@@ -40,15 +40,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   }
 
   function getCookie(name) {
-    const match = document.cookie.match(new RegExp('(^|;\\s*)' + name + '=([^;]+)'));
+    const match = document.cookie.match(new RegExp("(^|;\\s*)" + name + "=([^;]+)"));
     return match ? decodeURIComponent(match[2]) : null;
   }
 
   function uuidv4() {
     if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
       const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      const v = c === "x" ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
   }
@@ -82,6 +82,28 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     return id;
   }
 
+  function updateStoredFbp() {
+    const currentFbp = getCookie("_fbp");
+    const storedFbp = getLS("meta_fbp");
+
+    if (currentFbp && currentFbp !== storedFbp) {
+      setLS("meta_fbp", currentFbp);
+    }
+  }
+
+  function waitForFbp(retries, delay) {
+    updateStoredFbp();
+
+    const fbp = getLS("meta_fbp");
+    if (fbp) return;
+
+    if (retries > 0) {
+      setTimeout(function () {
+        waitForFbp(retries - 1, delay);
+      }, delay);
+    }
+  }
+
   const utm = {
     utm_source: getParam("utm_source"),
     utm_medium: getParam("utm_medium"),
@@ -92,11 +114,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   };
 
   const fbclid = getParam("fbclid");
-  const fbp = getCookie("_fbp");
   const nowTs = String(Math.floor(Date.now() / 1000));
 
   ensureExternalId();
-  saveIfExists("meta_fbp", fbp);
+
+  updateStoredFbp();
+  waitForFbp(15, 300);
 
   const hasAttributionInUrl =
     Object.values(utm).some(Boolean) || !!fbclid;
@@ -114,7 +137,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     saveIfExists("meta_first_fbclid", fbclid);
   }
 
-  // Якщо first_seen_at ще нема взагалі — створи хоча б базовий timestamp
+  // Якщо first_seen_at ще нема взагалі — створи базовий timestamp
   if (!getLS("meta_first_seen_at")) {
     setLS("meta_first_seen_at", nowTs);
   }
@@ -135,7 +158,6 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   console.log("ATTR INIT", {
     external_id: getLS("meta_external_id"),
     fbp: getLS("meta_fbp"),
-
     first: {
       seen_at: getLS("meta_first_seen_at"),
       fbclid: getLS("meta_first_fbclid"),
@@ -146,7 +168,6 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       utm_content: getLS("meta_first_utm_content"),
       utm_term: getLS("meta_first_utm_term")
     },
-
     last: {
       seen_at: getLS("meta_last_seen_at"),
       fbclid: getLS("meta_last_fbclid"),
@@ -170,9 +191,9 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function uuidv4() {
     if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
       const r = Math.random() * 16 | 0;
-      const v = c === 'x' ? r : (r & 0x3 | 0x8);
+      const v = c === "x" ? r : (r & 0x3 | 0x8);
       return v.toString(16);
     });
   }
@@ -183,6 +204,21 @@ document.addEventListener("DOMContentLoaded", function () {
     } catch (e) {
       return null;
     }
+  }
+
+  function buildAttributionPayload() {
+    return {
+      external_id: getLS("meta_external_id"),
+      fbp: getLS("meta_fbp"),
+      fbclid: getLS("meta_last_fbclid") || getLS("meta_first_fbclid") || null,
+      utm_source: getLS("meta_last_utm_source") || getLS("meta_first_utm_source") || null,
+      utm_medium: getLS("meta_last_utm_medium") || getLS("meta_first_utm_medium") || null,
+      utm_campaign: getLS("meta_last_utm_campaign") || getLS("meta_first_utm_campaign") || null,
+      utm_adset: getLS("meta_last_utm_adset") || getLS("meta_first_utm_adset") || null,
+      utm_content: getLS("meta_last_utm_content") || getLS("meta_first_utm_content") || null,
+      utm_term: getLS("meta_last_utm_term") || getLS("meta_first_utm_term") || null,
+      first_seen_at: Number(getLS("meta_first_seen_at")) || null
+    };
   }
 
   buttons.forEach(function (btn) {
@@ -197,20 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
         landing_id: window.APP_CONFIG?.landing_id || null,
         pixel_key: window.APP_CONFIG?.pixel_key || null,
         product_id: btn.dataset.productId,
-        attribution: {
-          external_id: getLS("meta_external_id"),
-          fbp: getLS("meta_fbp"),
-
-          fbclid: getLS("meta_last_fbclid") || getLS("meta_first_fbclid"),
-          utm_source: getLS("meta_last_utm_source") || getLS("meta_first_utm_source"),
-          utm_medium: getLS("meta_last_utm_medium") || getLS("meta_first_utm_medium"),
-          utm_campaign: getLS("meta_last_utm_campaign") || getLS("meta_first_utm_campaign"),
-          utm_adset: getLS("meta_last_utm_adset") || getLS("meta_first_utm_adset"),
-          utm_content: getLS("meta_last_utm_content") || getLS("meta_first_utm_content"),
-          utm_term: getLS("meta_last_utm_term") || getLS("meta_first_utm_term"),
-
-          first_seen_at: getLS("meta_first_seen_at")
-        }
+        attribution: buildAttributionPayload()
       };
 
       console.log("PAYLOAD TO API:", payload);
