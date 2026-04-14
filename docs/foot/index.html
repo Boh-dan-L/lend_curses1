@@ -233,6 +233,7 @@ document.addEventListener("DOMContentLoaded", function () {
         landing_id: window.APP_CONFIG?.landing_id || null,
         pixel_key: window.APP_CONFIG?.pixel_key || null,
         product_id: btn.dataset.productId,
+        event_source_url: window.location.href,
         attribution: buildAttributionPayload()
       };
 
