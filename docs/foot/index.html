@@ -104,6 +104,58 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     }
   }
 
+  function normalizePhone(phone) {
+    if (!phone) return null;
+    const digits = String(phone).replace(/\D/g, "");
+    return digits || null;
+  }
+
+  function getCustomerEmail() {
+    const selectors = [
+      'input[name="email"]',
+      'input[type="email"]',
+      '#email',
+      '.js-email',
+      '[data-customer-email]'
+    ];
+
+    for (const selector of selectors) {
+      const el = document.querySelector(selector);
+      if (el && el.value && String(el.value).trim()) {
+        return String(el.value).trim();
+      }
+    }
+
+    return getLS("customer_email") || null;
+  }
+
+  function getCustomerPhone() {
+    const selectors = [
+      'input[name="phone"]',
+      'input[type="tel"]',
+      '#phone',
+      '.js-phone',
+      '[data-customer-phone]'
+    ];
+
+    for (const selector of selectors) {
+      const el = document.querySelector(selector);
+      if (el && el.value && String(el.value).trim()) {
+        return normalizePhone(el.value);
+      }
+    }
+
+    return normalizePhone(getLS("customer_phone"));
+  }
+
+  function persistCustomerFields() {
+    const email = getCustomerEmail();
+    const phone = getCustomerPhone();
+
+    if (email) setLS("customer_email", email);
+    if (phone) setLS("customer_phone", phone);
+  }
+
   const utm = {
     utm_source: getParam("utm_source"),
     utm_medium: getParam("utm_medium"),
@@ -117,6 +169,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   const nowTs = String(Math.floor(Date.now() / 1000));
 
   ensureExternalId();
+  persistCustomerFields();
 
   updateStoredFbp();
   waitForFbp(15, 300);
@@ -124,7 +177,6 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   const hasAttributionInUrl =
     Object.values(utm).some(Boolean) || !!fbclid;
 
-  // FIRST TOUCH
   if (!getLS("meta_first_seen_at") && hasAttributionInUrl) {
     setLS("meta_first_seen_at", nowTs);
 
@@ -137,12 +189,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     saveIfExists("meta_first_fbclid", fbclid);
   }
 
-  // Якщо first_seen_at ще нема взагалі — створи базовий timestamp
   if (!getLS("meta_first_seen_at")) {
     setLS("meta_first_seen_at", nowTs);
   }
 
-  // LAST TOUCH
   if (hasAttributionInUrl) {
     setLS("meta_last_seen_at", nowTs);
 
@@ -158,6 +208,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   console.log("ATTR INIT", {
     external_id: getLS("meta_external_id"),
     fbp: getLS("meta_fbp"),
+    customer_email: getLS("customer_email"),
+    customer_phone: getLS("customer_phone"),
     first: {
       seen_at: getLS("meta_first_seen_at"),
       fbclid: getLS("meta_first_fbclid"),
@@ -206,6 +258,60 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 
+  function normalizePhone(phone) {
+    if (!phone) return null;
+    const digits = String(phone).replace(/\D/g, "");
+    return digits || null;
+  }
+
+  function getCustomerEmail() {
+    const selectors = [
+      'input[name="email"]',
+      'input[type="email"]',
+      '#email',
+      '.js-email',
+      '[data-customer-email]'
+    ];
+
+    for (const selector of selectors) {
+      const el = document.querySelector(selector);
+      if (el && el.value && String(el.value).trim()) {
+        return String(el.value).trim();
+      }
+    }
+
+    return getLS("customer_email") || null;
+  }
+
+  function getCustomerPhone() {
+    const selectors = [
+      'input[name="phone"]',
+      'input[type="tel"]',
+      '#phone',
+      '.js-phone',
+      '[data-customer-phone]'
+    ];
+
+    for (const selector of selectors) {
+      const el = document.querySelector(selector);
+      if (el && el.value && String(el.value).trim()) {
+        return normalizePhone(el.value);
+      }
+    }
+
+    return normalizePhone(getLS("customer_phone"));
+  }
+
+  function persistCustomerFields() {
+    const email = getCustomerEmail();
+    const phone = getCustomerPhone();
+
+    try {
+      if (email) localStorage.setItem("customer_email", email);
+      if (phone) localStorage.setItem("customer_phone", phone);
+    } catch (e) {}
+  }
+
   function buildAttributionPayload() {
     return {
       external_id: getLS("meta_external_id"),
@@ -218,6 +324,16 @@ document.addEventListener("DOMContentLoaded", function () {
       utm_content: getLS("meta_last_utm_content") || getLS("meta_first_utm_content") || null,
       utm_term: getLS("meta_last_utm_term") || getLS("meta_first_utm_term") || null,
       first_seen_at: Number(getLS("meta_first_seen_at")) || null
+    };
+  }
+
+  function buildCustomerPayload() {
+    persistCustomerFields();
+
+    return {
+      email: getCustomerEmail(),
+      phone: getCustomerPhone(),
+      external_id: getLS("meta_external_id") || null
     };
   }
 
@@ -234,7 +350,8 @@ document.addEventListener("DOMContentLoaded", function () {
         pixel_key: window.APP_CONFIG?.pixel_key || null,
         product_id: btn.dataset.productId,
         event_source_url: window.location.href,
-        attribution: buildAttributionPayload()
+        attribution: buildAttributionPayload(),
+        customer: buildCustomerPayload()
       };
 
       console.log("PAYLOAD TO API:", payload);
