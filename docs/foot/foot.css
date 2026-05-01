@@ -92,7 +92,7 @@
   }
 .hero__title{
     margin:8px 0 12px;
-    font-size:clamp(37px,6vw,36px);
+    font-size:clamp(33px,6vw,36px);
     line-height:1.15;
     font-weight:800;
     color:var(--c-white);}
